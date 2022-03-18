@@ -1,0 +1,13 @@
+.container {
+    display: flex;
+    width: 100%;
+    height: 160px;
+    padding-top: 100px;
+}
+
+.chartTemp,
+.chartHumid {
+    width: 50%;
+    background-color: lightblue;
+    border: thin solid darkgray;
+}
