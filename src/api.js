@@ -21,7 +21,7 @@ const headers = {
 }
 
 export var fetchFromToWithSensorType = (params) => {
-    return axios.get("http://164.92.132.20:8080/v1/data", {params, headers}).then(
+    return axios.get("https://irrigations.systems/v1/data", {params, headers}).then(
         data => {
             return data.data;
         },
