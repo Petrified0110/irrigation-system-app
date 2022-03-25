@@ -13,13 +13,22 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import {fetchFromToWithSensorType} from "../api";
 import {NowDataDisplay} from "../data_display/NowDataDisplay"
 import {PastXDataDisplay} from "../data_display/PastXDataDisplay"
+import Cookies from "universal-cookie";
+import {Route, Routes, Navigate} from "react-router-dom";
+import AuthenticateYourself from "../authentication/AuthenticateYourself";
+import {SignUp} from "../authentication/SignUp";
+import {Login} from "../authentication/Login";
+import {Account} from "../account/Account";
 
+const cookies = new Cookies();
 
 export class Navbar extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            isSignedIn: false,
+            email: "",
             allDropdownElems: ["Now", "Last Day", "Last Week", "Last Month"],
             humidity: [],
             temperature: [],
@@ -27,15 +36,19 @@ export class Navbar extends React.Component {
             otherDropdownElems: ["Last Day", "Last Week", "Last Month"]
         };
 
-        // this.getLatestHumidityData = this.getLatestHumidityData.bind(this);
-        // this.getLatestTemperatureData = this.getLatestTemperatureData.bind(this);
+        let cookiesToken = cookies.get('token');
+        if (cookiesToken !== undefined) {
+            this.state.isSignedIn = true
+            this.state.email = cookies.get('user')
+        }
     }
 
     getData = async (from, to, sensorType) => {
         let payload = {
             "from": from,
             "to": to,
-            "sensorType": sensorType
+            "sensorType": sensorType,
+            "deviceId": "nrf-352656100442659"
         };
 
         const params = new URLSearchParams(payload);
@@ -99,15 +112,20 @@ export class Navbar extends React.Component {
     displayData() {
         if (this.state.currentDropdown === "Now") {
             return NowDataDisplay(this.state.humidity, this.state.temperature)
+        } else if (this.state.currentDropdown === "Last Day") {
+            return PastXDataDisplay(24 * 60, this.state.humidity, this.state.temperature)
+        } else if (this.state.currentDropdown === "Last Week") {
+            return PastXDataDisplay(24 * 60 * 7, this.state.humidity, this.state.temperature)
+        } else if (this.state.currentDropdown === "Last Month") {
+            return PastXDataDisplay(24 * 60 * 30, this.state.humidity, this.state.temperature)
         }
-        else if(this.state.currentDropdown === "Last Day"){
-            return PastXDataDisplay(24*60, this.state.humidity, this.state.temperature)
-        }
-        else if(this.state.currentDropdown === "Last Week"){
-            return PastXDataDisplay(24*60*7, this.state.humidity, this.state.temperature)
-        }
-        else if(this.state.currentDropdown === "Last Month"){
-            return PastXDataDisplay(24*60*30, this.state.humidity, this.state.temperature)
+    }
+
+    branchLoggedIn() {
+        if (this.state.isSignedIn) {
+            return <Route path="/" element={this.displayData()}/>
+        } else {
+            return <Route path="/" element={<Navigate replace to="/authenticate"/>}/>
         }
     }
 
@@ -133,8 +151,8 @@ export class Navbar extends React.Component {
                                 {this.generateOtherDropdownMenu()}
                             </CDropdown>
                             <CNavItem>
-                                <CNavLink href="/" active>
-                                    Account
+                                <CNavLink href="/account" visible={this.state.isSignedIn} active >
+                                    My Account
                                 </CNavLink>
                             </CNavItem>
                             {/*<CNavItem>*/}
@@ -153,7 +171,13 @@ export class Navbar extends React.Component {
                     </CContainer>
                 </CNavbar>
                 <header className="App-header">
-                    {this.displayData()}
+                    <Routes>
+                        {this.branchLoggedIn()}
+                        <Route path="/authenticate" element={AuthenticateYourself()}/>
+                        <Route path="/signup" element={<SignUp/>}/>
+                        <Route path="/login" element={<Login/>}/>
+                        <Route path="/account" element={<Account/>}/>
+                    </Routes>
                 </header>
             </>
         )

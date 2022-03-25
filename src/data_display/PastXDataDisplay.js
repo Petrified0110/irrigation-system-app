@@ -57,7 +57,22 @@ export const PastXDataDisplay = (minutes, humidity, temperature) => {
                 month: 'MMM \'yy',
                 day: 'dd MMM',
                 hour: 'HH:mm'
-            }
+            },
+            style: {
+                colors: ['#000000'],
+                fontSize: '12px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 400,
+                cssClass: 'apexcharts-xaxis-label',
+            },
+        },
+        dataLabels: {
+            style: {
+                fontSize: '14px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 'bold',
+                colors: ['#000']
+            },
         },
         tooltip: {
             x: {

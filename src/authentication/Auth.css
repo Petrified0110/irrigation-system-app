@@ -1,0 +1,11 @@
+@media all and (min-width: 480px) {
+    .Auth {
+      padding: 60px 0;
+    }
+  
+    .Auth form {
+      margin: 0 auto;
+      max-width: 320px;
+      text-align: left;
+    }
+  }
