@@ -1,0 +1,24 @@
+@media all and (min-width: 480px) {
+    .device {
+        padding: 0px 10px;
+        marginTop: 15px;
+        background: lightblue;
+        color: black;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .name {
+        text-align: left;
+    }
+
+    .button {
+        text-align: right;
+        position: relative;
+        /*top: 50px;*/
+        font-size: 18px;
+        padding-top: 17px;
+        float: right;
+    }
+}

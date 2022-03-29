@@ -25,11 +25,8 @@ export class Account extends React.Component {
 
         try {
             let retrievedAccounts = await getAllAccounts();
-            console.log(retrievedAccounts)
             this.state.account = retrievedAccounts.find(data => data.email === currentUserEmail)
             this.state.accounts = retrievedAccounts.filter(data => data.email !== currentUserEmail)
-
-            console.log(this.state)
         } catch (err) {
         }
 

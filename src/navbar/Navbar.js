@@ -1,24 +1,35 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 
 import {
-    CNavbar,
+    CButton,
     CContainer,
+    CDropdown,
+    CDropdownDivider,
+    CDropdownItem,
+    CDropdownMenu,
+    CDropdownToggle,
+    CNavbar,
     CNavbarBrand,
     CNavbarNav,
     CNavItem,
-    CNavLink, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem, CDropdownDivider
+    CNavLink
 } from '@coreui/react';
+import {View} from "react-native";
 import '@coreui/coreui/dist/css/coreui.min.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import {fetchFromToWithSensorType} from "../api";
+import {fetchFromToWithSensorType, getShareableAccountsEndpoint, shareDevice} from "../api";
 import {NowDataDisplay} from "../data_display/NowDataDisplay"
 import {PastXDataDisplay} from "../data_display/PastXDataDisplay"
 import Cookies from "universal-cookie";
-import {Route, Routes, Navigate} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import AuthenticateYourself from "../authentication/AuthenticateYourself";
 import {SignUp} from "../authentication/SignUp";
 import {Login} from "../authentication/Login";
 import {Account} from "../account/Account";
+import {DevicePicker} from "../devices/DevicePicker";
+import Button from "react-bootstrap/Button";
+
+import "./Navbar.css"
 
 const cookies = new Cookies();
 
@@ -33,13 +44,26 @@ export class Navbar extends React.Component {
             humidity: [],
             temperature: [],
             currentDropdown: "Now",
-            otherDropdownElems: ["Last Day", "Last Week", "Last Month"]
+            otherDropdownElems: ["Last Day", "Last Week", "Last Month"],
+            accountDropdownElems: [],
+            devices: [],
+            selectedDevice: "",
+            selectedDeviceName: "",
+            accountToShareWith: ""
         };
+
+        this.DevicePicker = React.createRef();
 
         let cookiesToken = cookies.get('token');
         if (cookiesToken !== undefined) {
             this.state.isSignedIn = true
             this.state.email = cookies.get('user')
+        }
+
+        let cookiesSelectedDevice = cookies.get('selectedDevice')
+        if (cookiesSelectedDevice !== undefined) {
+            this.state.selectedDevice = cookiesSelectedDevice
+            this.state.selectedDeviceName = cookies.get('selectedDeviceName')
         }
     }
 
@@ -48,7 +72,7 @@ export class Navbar extends React.Component {
             "from": from,
             "to": to,
             "sensorType": sensorType,
-            "deviceId": "nrf-352656100442659"
+            "deviceId": this.state.selectedDevice
         };
 
         const params = new URLSearchParams(payload);
@@ -73,29 +97,53 @@ export class Navbar extends React.Component {
         );
     }
 
+    getShareableAccountsForDevice = async () => {
+        let payload = {
+            "deviceId": this.state.selectedDevice
+        };
+        const params = new URLSearchParams(payload);
+
+        await getShareableAccountsEndpoint(params).then(
+            result => {
+                this.setState({accountDropdownElems: result.map(account => account.email)});
+            }
+        )
+    }
+
     orderDataByTime(data) {
         return data.sort((a, b) => (a.time > b.time) ? 1 : -1)
     }
 
     componentDidMount() {
-        this.getDataFor30Days("HUMID");
-        this.getDataFor30Days("TEMP");
+        if (this.state.selectedDevice !== "") {
+            this.getShareableAccountsForDevice();
+            this.getDataFor30Days("HUMID");
+            this.getDataFor30Days("TEMP");
+        }
+
         console.log("MOUNT")
     }
 
     handleRemoveDropdownElem(elem) {
-        const newList = this.state.allDropdownElems.filter(item => item !== elem);
-
-        this.state.otherDropdownElems = newList
+        this.state.otherDropdownElems = this.state.allDropdownElems.filter(item => item !== elem)
     }
 
     changeCurrentDropdown(elem) {
-        this.getDataFor30Days("HUMID");
-        this.getDataFor30Days("TEMP");
+        if (this.state.selectedDevice !== "") {
+            this.getDataFor30Days("HUMID");
+            this.getDataFor30Days("TEMP");
+        }
         this.state.currentDropdown = elem
         this.handleRemoveDropdownElem(elem)
         this.forceUpdate()
     }
+
+    changeSelectedAccountToShareWith(elem) {
+        this.state.currentAccountToShareWith = elem
+
+        this.forceUpdate()
+    }
+
 
     generateOtherDropdownMenu() {
         return (
@@ -105,6 +153,20 @@ export class Navbar extends React.Component {
                 {this.state.otherDropdownElems.map(elem =>
                     <CDropdownItem onClick={() => this.changeCurrentDropdown(elem)}>{elem}</CDropdownItem>
                 )}
+            </CDropdownMenu>
+        )
+    }
+
+    generateAccountsDropdownMenu() {
+        return (
+            <CDropdownMenu>
+                {
+                    this.state.accountDropdownElems.map(elem =>
+                        <CDropdownItem onClick={() => this.changeSelectedAccountToShareWith(elem)}>
+                            {elem}
+                        </CDropdownItem>
+                    )
+                }
             </CDropdownMenu>
         )
     }
@@ -121,11 +183,39 @@ export class Navbar extends React.Component {
         }
     }
 
+    chooseDevice() {
+        return (
+            <div align="center">
+                <h1>Choose a device</h1>
+                <Button block size="lg" href="/devices">
+                    Devices
+                </Button>
+            </div>
+        )
+    }
+
     branchLoggedIn() {
         if (this.state.isSignedIn) {
-            return <Route path="/" element={this.displayData()}/>
+            if (this.state.selectedDevice !== "") {
+                return <Route path="/" element={this.displayData()}/>
+            }
+            return <Route path="/" element={this.chooseDevice()}/>
         } else {
             return <Route path="/" element={<Navigate replace to="/authenticate"/>}/>
+        }
+    }
+
+    handleShareDevice = (accountToShareWith) => {
+        console.log("share device ", accountToShareWith)
+
+        if (accountToShareWith) {
+            let payload = {
+                "email": accountToShareWith,
+                "deviceId": this.state.selectedDevice
+            };
+
+            const params = new URLSearchParams(payload);
+            shareDevice(params);
         }
     }
 
@@ -143,15 +233,15 @@ export class Navbar extends React.Component {
                                     Home
                                 </CNavLink>
                             </CNavItem>
-                            {/*<CNavItem>*/}
-                            {/*    <CNavLink href="#">Link</CNavLink>*/}
-                            {/*</CNavItem>*/}
-                            <CDropdown variant="nav-item" popper={false}>
+                            <CNavItem>
+                                <CNavLink href="/devices" active>Devices</CNavLink>
+                            </CNavItem>
+                            <CDropdown variant="nav-item" popper={false} active>
                                 <CDropdownToggle color="secondary">{this.state.currentDropdown}</CDropdownToggle>
                                 {this.generateOtherDropdownMenu()}
                             </CDropdown>
                             <CNavItem>
-                                <CNavLink href="/account" visible={this.state.isSignedIn} active >
+                                <CNavLink href="/account" visible={this.state.isSignedIn} active>
                                     My Account
                                 </CNavLink>
                             </CNavItem>
@@ -170,6 +260,32 @@ export class Navbar extends React.Component {
                         {/*</CCollapse>*/}
                     </CContainer>
                 </CNavbar>
+                <View style={{borderBottomColor: 'black', borderBottomWidth: 1,}}/>
+                {
+                    this.state.selectedDevice !== "" &&
+                    <div className="device1">
+                        <CNavbar expand="lg" colorScheme="light" className="bg-light">
+                            <CContainer fluid>
+                                <CNavbarBrand>
+                                    <h6>{this.state.selectedDeviceName}</h6>
+                                    <h7>{this.state.selectedDevice}</h7>
+                                </CNavbarBrand>
+                                <CNavbarNav>
+                                    <CDropdown variant="nav-item" popper={false} active>
+                                        <CDropdownToggle
+                                            color="secondary">{this.state.currentAccountToShareWith ? this.state.currentAccountToShareWith : "Choose an account to share with"}
+                                        </CDropdownToggle>
+                                        {this.generateAccountsDropdownMenu()}
+                                    </CDropdown>
+                                    <Button onClick={() => this.handleShareDevice(this.state.currentAccountToShareWith)}
+                                            color="primary">
+                                        Share
+                                    </Button>
+                                </CNavbarNav>
+                            </CContainer>
+                        </CNavbar>
+                    </div>
+                }
                 <header className="App-header">
                     <Routes>
                         {this.branchLoggedIn()}
@@ -177,9 +293,12 @@ export class Navbar extends React.Component {
                         <Route path="/signup" element={<SignUp/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="/account" element={<Account/>}/>
+                        <Route path="/devices"
+                               element={<DevicePicker ref={this.DevicePicker} devices={this.state.devices}/>}/>
                     </Routes>
                 </header>
             </>
         )
     }
+
 }

@@ -1,0 +1,14 @@
+@media all and (min-width: 480px) {
+    .Device {
+        color: black;
+        height: 200px;
+        textAlign: center;
+        padding: 5px 10px;
+        background: #eee;
+        marginTop: 15px
+    }
+
+    .DevicePicker {
+        padding-top: 100px;
+    }
+}

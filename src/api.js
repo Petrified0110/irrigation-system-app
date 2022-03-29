@@ -37,6 +37,16 @@ export var fetchFromToWithSensorType = (params) => {
     })
 }
 
+export var fetchDevices = () => {
+    return axios.get(baseUrl + "v1/devices", {headers}).then(
+        data => {
+            return data.data
+        }
+    ).catch((error) => {
+        console.log(error?.response?.data)
+    })
+}
+
 export var signUp = (user) => {
     axios.post(baseUrl + "v1/account", user, {headers})
         .then(
@@ -75,16 +85,41 @@ export var getAllAccounts = async () => {
     })
 }
 
-export var createDevice = (device) => {
-    axios.post(baseUrl + "v1/device", device, {headers})
+export var getShareableAccountsEndpoint = async (params) => {
+
+    return axios.get(baseUrl + "v1/accounts", {params, headers}).then(
+        data => {
+            return data.data
+        }
+    ).catch((error) => {
+        console.log(error?.response?.data)
+    })
+}
+
+export var shareDevice = (params) => {
+    const url =
+        baseUrl + "v1/device/share?" +
+        params;
+
+    axios.post(url, {}, {headers})
         .then(
-            result => {}
+            result => {
+
+            }
         ).catch((error) => {
         console.log(error?.response?.data)
     })
 }
 
-
+export var createDevice = (device) => {
+    axios.post(baseUrl + "v1/device", device, {headers})
+        .then(
+            result => {
+            }
+        ).catch((error) => {
+        console.log(error?.response?.data)
+    })
+}
 
 
 axios.interceptors.request.use(request => {

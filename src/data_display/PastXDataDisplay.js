@@ -9,13 +9,6 @@ export const PastXDataDisplay = (minutes, humidity, temperature) => {
         const currentDate = new Date();
         const limit = new Date(currentDate.setMinutes(currentDate.getMinutes() - minutes)).toISOString();
 
-        // console.log(data.map(d => {
-        //     console.log(d.time)
-        //     console.log(limit)
-        //     console.log(d.time > limit)
-        //     // console.log(d.time > limit)
-        //     return  d.time - limit > 0
-        // }))
 
         const filteredData = data.filter(d => d.time > limit);
 
@@ -39,7 +32,6 @@ export const PastXDataDisplay = (minutes, humidity, temperature) => {
     const optionsTemperature = {
         xaxis: {
             categories: getDataForLastX(minutes, temperature).map(data => {
-                console.log(data.time)
                 return data.time
             }),
             type: 'datetime',
