@@ -8,6 +8,10 @@
         marginTop: 15px
     }
 
+    .Device.Owned {
+        background: lightblue;
+    }
+
     .DevicePicker {
         padding-top: 100px;
     }

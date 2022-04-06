@@ -26,7 +26,7 @@ export class Login extends React.Component{
             password: this.state.password
         }
 
-        login(credentials);
+        return login(credentials);
     }
 
     onInputChange(event) {

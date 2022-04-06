@@ -10,8 +10,12 @@ export class DevicePicker extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            devices: []
+            devices: [],
+            currentUser: ""
         };
+
+        let cookies = new Cookies()
+        this.state.currentUser = cookies.get("user")
     }
 
     getDevices = async () => {
@@ -23,7 +27,7 @@ export class DevicePicker extends React.Component {
         )
     }
 
-    componentDidMount = async() => {
+    componentDidMount = async () => {
         await this.getDevices()
     }
 
@@ -35,15 +39,25 @@ export class DevicePicker extends React.Component {
         cookies.set('selectedDeviceName', device.deviceName, {path: '/'});
     }
 
+    returnClassName = (device) => {
+        var className = "Device"
+
+        if (device.owner === this.state.currentUser) {
+            className = "Device Owned"
+        }
+        return className
+    }
+
 
     render() {
         return (
             <div className="DevicePicker">
                 {
-                    this.state.devices.map((post, index) => {
-                        return (<div key={index} className="Device">
-                            <h1>{post.deviceName}</h1>
-                            <h2>{post.deviceId}</h2>
+                    this.state.devices.map((device, index) => {
+                        return (<div key={index} className={this.returnClassName(device)}>
+                            <h1>{device.deviceName}</h1>
+                            <h2>{device.deviceId}</h2>
+                            <h3>Owner: {device.owner}</h3>
                             <Button onClick={this.handleDeviceSelection(index)} href="/">See data</Button>
                         </div>)
                     })

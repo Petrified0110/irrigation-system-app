@@ -1,25 +1,13 @@
 import axios from "axios";
 import Cookies from 'universal-cookie';
+import {Navigate} from 'react-router-dom';
+import React from "react";
 
-// export default {
-//   // user: {
-//   //   login: credentials =>
-//   //     axios.get("http://164.92.132.20:8080/v1/data", { credentials }).then(res => res.data),
-//   //   register: user =>
-//   //     axios.post("/api/user", { user }).then(res => res.data.data),
-//   //   }
-//   sensorData: {
-//     fetchFromToWithSensorType
-//     // create: event =>
-//     //   axios.post("http://localhost:8000/api/event", { event }).then(res => res.data.data.event)
-//   }
-// };
 const baseUrl = "https://irrigations.systems/"
 
 function getToken() {
     let cookies = new Cookies()
     return cookies.get('token')
-
 }
 
 const headers = {
@@ -51,7 +39,7 @@ export var signUp = (user) => {
     axios.post(baseUrl + "v1/account", user, {headers})
         .then(
             result => {
-                window.location.replace = baseUrl
+                this.props.history.push(baseUrl)
             }
         ).catch((error) => {
         console.log(error?.response?.data)
@@ -65,7 +53,7 @@ export var login = (credentials) => {
                 cookies.set('token', token, {path: '/'});
                 cookies.set('user', credentials.email, {path: '/'})
 
-                window.location.replace = baseUrl
+                return <Navigate replace to="/"/>
             }
         ).catch((error) => {
         console.log(error?.response?.data)

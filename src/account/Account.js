@@ -38,6 +38,8 @@ export class Account extends React.Component {
 
         cookies.remove('token', {path: '/'});
         cookies.remove('user', {path: '/'});
+        cookies.remove('selectedDevice', {path: '/'});
+        cookies.remove('selectedDeviceName', {path: '/'});
     }
 
     validateForm() {
