@@ -153,7 +153,8 @@ export class Navbar extends React.Component {
                 <CDropdownItem disabled>{this.state.currentDropdown}</CDropdownItem>
                 <CDropdownDivider/>
                 {this.state.otherDropdownElems.map(elem =>
-                    <CDropdownItem onClick={() => this.changeCurrentDropdown(elem)}>{elem}</CDropdownItem>
+                    <CDropdownItem disabled={!this.state.isSignedIn}
+                                   onClick={() => this.changeCurrentDropdown(elem)}>{elem}</CDropdownItem>
                 )}
             </CDropdownMenu>
         )
@@ -163,150 +164,150 @@ export class Navbar extends React.Component {
         return (
             <CDropdownMenu>
                 {
-                    this.state.accountDropdownElems.map(elem =>
+                    this.state.accountDropdownElems.filter(email => email !== this.state.email).map(elem =>
                         <CDropdownItem onClick={() => this.changeSelectedAccountToShareWith(elem)}>
                             {elem}
                         </CDropdownItem>
                     )
                 }
-            </CDropdownMenu>
-        )
-    }
+                    </CDropdownMenu>
+                    )
+                    }
 
-    displayData() {
-        if (this.state.currentDropdown === "Now") {
-            return NowDataDisplay(this.state.humidity, this.state.temperature)
-        } else if (this.state.currentDropdown === "Last Day") {
-            return PastXDataDisplay(24 * 60, this.state.humidity, this.state.temperature)
-        } else if (this.state.currentDropdown === "Last Week") {
-            return PastXDataDisplay(24 * 60 * 7, this.state.humidity, this.state.temperature)
-        } else if (this.state.currentDropdown === "Last Month") {
-            return PastXDataDisplay(24 * 60 * 30, this.state.humidity, this.state.temperature)
-        }
-    }
+                    displayData() {
+                    if (this.state.currentDropdown === "Now") {
+                    return NowDataDisplay(this.state.humidity, this.state.temperature)
+                } else if (this.state.currentDropdown === "Last Day") {
+                    return PastXDataDisplay(24 * 60, this.state.humidity, this.state.temperature)
+                } else if (this.state.currentDropdown === "Last Week") {
+                    return PastXDataDisplay(24 * 60 * 7, this.state.humidity, this.state.temperature)
+                } else if (this.state.currentDropdown === "Last Month") {
+                    return PastXDataDisplay(24 * 60 * 30, this.state.humidity, this.state.temperature)
+                }
+                }
 
-    chooseDevice() {
-        return (
-            <div align="center">
-                <h1>Choose a device</h1>
-                <Button block size="lg" href="/devices">
+                    chooseDevice() {
+                    return (
+                    <div align="center">
+                    <h1>Choose a device</h1>
+                    <Button block size="lg" href="/devices">
                     Devices
-                </Button>
-            </div>
-        )
-    }
+                    </Button>
+                    </div>
+                    )
+                }
 
-    branchLoggedIn() {
-        if (this.state.isSignedIn) {
-            if (this.state.selectedDevice !== "") {
-                return <Route path="/" element={this.displayData()}/>
-            }
-            return <Route path="/" element={this.chooseDevice()}/>
-        } else {
-            return <Route path="/" element={<Navigate replace to="/authenticate"/>}/>
-        }
-    }
+                    branchLoggedIn() {
+                    if (this.state.isSignedIn) {
+                    if (this.state.selectedDevice !== "") {
+                    return <Route path="/" element={this.displayData()}/>
+                }
+                    return <Route path="/" element={this.chooseDevice()}/>
+                } else {
+                    return <Route path="/" element={<Navigate replace to="/authenticate"/>}/>
+                }
+                }
 
-    handleShareDevice = (accountToShareWith) => {
-        console.log("share device ", accountToShareWith)
+                    handleShareDevice = (accountToShareWith) => {
+                    console.log("share device ", accountToShareWith)
 
-        if (accountToShareWith) {
-            let payload = {
-                "email": accountToShareWith,
-                "deviceId": this.state.selectedDevice
-            };
+                    if (accountToShareWith) {
+                    let payload = {
+                    "email": accountToShareWith,
+                    "deviceId": this.state.selectedDevice
+                };
 
-            const params = new URLSearchParams(payload);
-            shareDevice(params);
-        }
-    }
+                    const params = new URLSearchParams(payload);
+                    shareDevice(params);
+                }
+                }
 
-    render() {
-        return (
-            <>
-                <CNavbar expand="lg" colorScheme="light" className="bg-light">
+                    render() {
+                    return (
+                    <>
+                    <CNavbar expand="lg" colorScheme="light" className="bg-light">
                     <CContainer fluid>
-                        <CNavbarBrand href="#">Irrigation System</CNavbarBrand>
-                        {/*<CNavbarToggler onClick={() => setVisible(!visible)}/>*/}
-                        {/*<CCollapse className="navbar-collapse" visible={visible}>*/}
-                        <CNavbarNav>
-                            <CNavItem>
-                                <CNavLink href="/" active>
-                                    Home
-                                </CNavLink>
-                            </CNavItem>
-                            <CNavItem>
-                                <CNavLink href="/devices" active>Devices</CNavLink>
-                            </CNavItem>
-                            <CDropdown variant="nav-item" popper={false} active>
-                                <CDropdownToggle color="secondary">{this.state.currentDropdown}</CDropdownToggle>
-                                {this.generateOtherDropdownMenu()}
-                            </CDropdown>
-                            <CNavItem>
-                                <CNavLink href="/account" visible={this.state.isSignedIn} active>
-                                    My Account
-                                </CNavLink>
-                            </CNavItem>
-                            {/*<CNavItem>*/}
-                            {/*    <CNavLink href="#" disabled>*/}
-                            {/*        Disabled*/}
-                            {/*    </CNavLink>*/}
-                            {/*</CNavItem>*/}
-                        </CNavbarNav>
-                        {/*<CForm className="d-flex">*/}
-                        {/*    <CFormInput type="search" className="me-2" placeholder="Search"/>*/}
-                        {/*    <CButton type="submit" color="success" variant="outline">*/}
-                        {/*        Search*/}
-                        {/*    </CButton>*/}
-                        {/*</CForm>*/}
-                        {/*</CCollapse>*/}
+                    <CNavbarBrand href="#">Irrigation System</CNavbarBrand>
+                {/*<CNavbarToggler onClick={() => setVisible(!visible)}/>*/}
+                {/*<CCollapse className="navbar-collapse" visible={visible}>*/}
+                    <CNavbarNav>
+                    <CNavItem>
+                    <CNavLink href="/" active>
+                    Home
+                    </CNavLink>
+                    </CNavItem>
+                    <CNavItem>
+                    <CNavLink href="/devices" disabled={!this.state.isSignedIn}>Devices</CNavLink>
+                    </CNavItem>
+                    <CDropdown variant="nav-item" popper={false} disabled={!this.state.isSignedIn}>
+                    <CDropdownToggle color="secondary">{this.state.currentDropdown}</CDropdownToggle>
+                {this.generateOtherDropdownMenu()}
+                    </CDropdown>
+                    <CNavItem>
+                    <CNavLink href="/account" disabled={!this.state.isSignedIn}>
+                    My Account
+                    </CNavLink>
+                    </CNavItem>
+                {/*<CNavItem>*/}
+                {/*    <CNavLink href="#" disabled>*/}
+                {/*        Disabled*/}
+                {/*    </CNavLink>*/}
+                {/*</CNavItem>*/}
+                    </CNavbarNav>
+                {/*<CForm className="d-flex">*/}
+                {/*    <CFormInput type="search" className="me-2" placeholder="Search"/>*/}
+                {/*    <CButton type="submit" color="success" variant="outline">*/}
+                {/*        Search*/}
+                {/*    </CButton>*/}
+                {/*</CForm>*/}
+                {/*</CCollapse>*/}
                     </CContainer>
-                </CNavbar>
-                <View style={{borderBottomColor: 'black', borderBottomWidth: 1,}}/>
+                    </CNavbar>
+                    <View style={{borderBottomColor: 'black', borderBottomWidth: 1,}}/>
                 {
                     this.state.selectedDevice !== "" &&
                     <div className="device1">
-                        <CNavbar expand="lg" colorScheme="light" className="bg-light">
-                            <CContainer fluid>
-                                <CNavbarBrand>
-                                    <h6>{this.state.selectedDeviceName}</h6>
-                                    <h7>{this.state.selectedDevice}</h7>
-                                </CNavbarBrand>
-                                <CNavbarNav color-scheme="light">
-                                    <CDropdown variant="nav-item" popper={false} active>
-                                        <CDropdownToggle
-                                            color="light">{this.state.currentAccountToShareWith ? this.state.currentAccountToShareWith : "Choose an account to share with"}
-                                        </CDropdownToggle>
-                                        {this.generateAccountsDropdownMenu()}
-                                    </CDropdown>
-                                    <CButton
-                                        onClick={() => this.handleShareDevice(this.state.currentAccountToShareWith)}
-                                        color="light">
-                                        Share
-                                    </CButton>
-                                    <CButton href="/forecast" active
-                                             color="light">
-                                        See weather forecast
-                                    </CButton>
-                                </CNavbarNav>
-                            </CContainer>
-                        </CNavbar>
+                    <CNavbar expand="lg" colorScheme="light" className="bg-light">
+                    <CContainer fluid>
+                    <CNavbarBrand>
+                    <h6>{this.state.selectedDeviceName}</h6>
+                    <h7>{this.state.selectedDevice}</h7>
+                    </CNavbarBrand>
+                    <CNavbarNav color-scheme="light">
+                    <CDropdown variant="nav-item" popper={false} active>
+                    <CDropdownToggle
+                    color="light">{this.state.currentAccountToShareWith ? this.state.currentAccountToShareWith : "Choose an account to share with"}
+                    </CDropdownToggle>
+                {this.generateAccountsDropdownMenu()}
+                    </CDropdown>
+                    <CButton
+                    onClick={() => this.handleShareDevice(this.state.currentAccountToShareWith)}
+                    color="light">
+                    Share
+                    </CButton>
+                    <CButton href="/forecast" active
+                    color="light">
+                    See weather forecast
+                    </CButton>
+                    </CNavbarNav>
+                    </CContainer>
+                    </CNavbar>
                     </div>
                 }
-                <header className="App-header">
+                    <header className="App-header">
                     <Routes>
-                        {this.branchLoggedIn()}
-                        <Route path="/authenticate" element={AuthenticateYourself()}/>
-                        <Route path="/signup" element={<SignUp/>}/>
-                        <Route path="/login" element={<Login/>}/>
-                        <Route path="/account" element={<Account/>}/>
-                        <Route path="/devices"
-                               element={<DevicePicker ref={this.DevicePicker} devices={this.state.devices}/>}/>
-                        <Route path="/forecast" element={<ForecastPage device={this.state.selectedDevice}/>}/>
+                {this.branchLoggedIn()}
+                    <Route path="/authenticate" element={AuthenticateYourself()}/>
+                    <Route path="/signup" element={<SignUp/>}/>
+                    <Route path="/login" element={<Login/>}/>
+                    <Route path="/account" element={<Account/>}/>
+                    <Route path="/devices"
+                    element={<DevicePicker ref={this.DevicePicker} devices={this.state.devices}/>}/>
+                    <Route path="/forecast" element={<ForecastPage device={this.state.selectedDevice}/>}/>
                     </Routes>
-                </header>
-            </>
-        )
-    }
+                    </header>
+                    </>
+                    )
+                }
 
-}
+                    }

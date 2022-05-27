@@ -2,7 +2,6 @@ import React from "react";
 
 import ReactWeather from 'react-open-weather';
 
-
 import "./ForecastPage.css";
 import {getForecast} from "../api";
 import svgIcons from "react-open-weather/src/js/svgIcons";
@@ -41,7 +40,6 @@ export class ForecastPage extends React.Component {
                     // window.location.reload()
                 } else {
                     this.props.history.push('/')
-                    console.log("I AM OUT")
                 }
 
                 //TODO: throw error no gps or no data for device
