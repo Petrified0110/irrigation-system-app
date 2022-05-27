@@ -6,6 +6,10 @@
     color: black;
 }
 
+.nowData{
+    text-align: justify;
+}
+
 .chartTemp,
 .chartHumid {
     width: 50%;

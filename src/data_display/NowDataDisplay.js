@@ -1,5 +1,7 @@
 import React from "react";
 import {Humidity, Temperature} from "react-environment-chart";
+import './PastXDataDisplay.css';
+
 
 export const NowDataDisplay = (humidity, temperature) => {
 
@@ -20,7 +22,7 @@ export const NowDataDisplay = (humidity, temperature) => {
     }
 
     return (
-        <div>
+        <div className="nowData">
             {getLatestHumidityData()}
             {getLatestTemperatureData()}
         </div>
