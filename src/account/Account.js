@@ -77,7 +77,6 @@ export class Account extends React.Component {
                             type="email"
                             value={this.state.account.email}
                             readOnly={true}
-                            // onChange={(e) => this.setState(this.onInputChange(e))}
                         />
                     </Form.Group>
                     <Form.Group size="lg" controlId="firstName">
@@ -86,7 +85,6 @@ export class Account extends React.Component {
                             color="black"
                             type="firstName"
                             value={this.state.account.firstName}
-                            // onChange={(e) => this.setState(this.onInputChange(e))}
                         />
                     </Form.Group>
                     <Form.Group size="lg" controlId="lastName">
@@ -95,7 +93,6 @@ export class Account extends React.Component {
                             color="black"
                             type="lastName"
                             value={this.state.account.lastName}
-                            // onChange={(e) => this.setState(this.onInputChange(e))}
                         />
                     </Form.Group>
                 </Form>
