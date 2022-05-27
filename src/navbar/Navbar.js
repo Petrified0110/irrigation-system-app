@@ -12,12 +12,13 @@ import {
     CNavbarBrand,
     CNavbarNav,
     CNavItem,
-    CNavLink
+    CNavLink,
+    CForm
 } from '@coreui/react';
 import {View} from "react-native";
 import '@coreui/coreui/dist/css/coreui.min.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import {fetchFromToWithSensorType, getShareableAccountsEndpoint, shareDevice} from "../api";
+import {fetchFromToWithSensorType, getForecast, getShareableAccountsEndpoint, shareDevice} from "../api";
 import {NowDataDisplay} from "../data_display/NowDataDisplay"
 import {PastXDataDisplay} from "../data_display/PastXDataDisplay"
 import Cookies from "universal-cookie";
@@ -30,6 +31,7 @@ import {DevicePicker} from "../devices/DevicePicker";
 import Button from "react-bootstrap/Button";
 
 import "./Navbar.css"
+import {ForecastPage} from "../forecast/ForecastPage";
 
 const cookies = new Cookies();
 
@@ -270,17 +272,22 @@ export class Navbar extends React.Component {
                                     <h6>{this.state.selectedDeviceName}</h6>
                                     <h7>{this.state.selectedDevice}</h7>
                                 </CNavbarBrand>
-                                <CNavbarNav>
+                                <CNavbarNav color-scheme="light">
                                     <CDropdown variant="nav-item" popper={false} active>
                                         <CDropdownToggle
-                                            color="secondary">{this.state.currentAccountToShareWith ? this.state.currentAccountToShareWith : "Choose an account to share with"}
+                                            color="light">{this.state.currentAccountToShareWith ? this.state.currentAccountToShareWith : "Choose an account to share with"}
                                         </CDropdownToggle>
                                         {this.generateAccountsDropdownMenu()}
                                     </CDropdown>
-                                    <Button onClick={() => this.handleShareDevice(this.state.currentAccountToShareWith)}
-                                            color="primary">
+                                    <CButton
+                                        onClick={() => this.handleShareDevice(this.state.currentAccountToShareWith)}
+                                        color="light">
                                         Share
-                                    </Button>
+                                    </CButton>
+                                    <CButton href="/forecast" active
+                                             color="light">
+                                        See weather forecast
+                                    </CButton>
                                 </CNavbarNav>
                             </CContainer>
                         </CNavbar>
@@ -295,6 +302,7 @@ export class Navbar extends React.Component {
                         <Route path="/account" element={<Account/>}/>
                         <Route path="/devices"
                                element={<DevicePicker ref={this.DevicePicker} devices={this.state.devices}/>}/>
+                        <Route path="/forecast" element={<ForecastPage device={this.state.selectedDevice}/>}/>
                     </Routes>
                 </header>
             </>

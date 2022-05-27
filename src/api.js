@@ -109,6 +109,16 @@ export var createDevice = (device) => {
     })
 }
 
+export var getForecast = (params) => {
+    return axios.get(baseUrl + "v1/forecast", {params, headers}).then(
+        data => {
+            return data.data
+        }
+    ).catch((error) => {
+        console.log(error?.response?.data)
+    })
+}
+
 
 axios.interceptors.request.use(request => {
     // console.log('Starting Request', JSON.stringify(request, null, 2))
