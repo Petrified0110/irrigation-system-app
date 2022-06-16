@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import {login} from "../api";
 
 import "./Auth.css";
+import {Navigate, Route, useNavigate} from "react-router-dom";
 
 export class Login extends React.Component{
     constructor(props) {
@@ -26,7 +27,11 @@ export class Login extends React.Component{
             password: this.state.password
         }
 
-        return login(credentials);
+        login(credentials);
+
+        // const navigate = useNavigate();
+        // navigate("https://irrigations.systems/")
+        return <Route path="/" element={<Navigate replace to="/"/>}/>
     }
 
     onInputChange(event) {

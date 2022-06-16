@@ -2,7 +2,6 @@ import React from "react";
 
 import ReactWeather from 'react-open-weather';
 
-import "./ForecastPage.css";
 import {getForecast} from "../api";
 import svgIcons from "react-open-weather/src/js/svgIcons";
 

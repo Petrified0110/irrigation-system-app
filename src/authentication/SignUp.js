@@ -87,7 +87,7 @@ export class SignUp extends React.Component {
                         <Form.Label>Confirm your password</Form.Label>
                         <Form.Control
                             color="black"
-                            type="confirmPassword"
+                            type="password"
                             value={this.state.confirmPassword}
                             onChange={(e) => this.setState(this.onInputChange(e))}
                         />

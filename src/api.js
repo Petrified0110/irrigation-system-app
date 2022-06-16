@@ -1,6 +1,5 @@
 import axios from "axios";
 import Cookies from 'universal-cookie';
-import {Navigate} from 'react-router-dom';
 import React from "react";
 
 const baseUrl = "https://irrigations.systems/"
@@ -39,7 +38,7 @@ export var signUp = (user) => {
     axios.post(baseUrl + "v1/account", user, {headers})
         .then(
             result => {
-                this.props.history.push(baseUrl)
+                window.location.replace(window.location.origin.toString());
             }
         ).catch((error) => {
         console.log(error?.response?.data)
@@ -53,7 +52,7 @@ export var login = (credentials) => {
                 cookies.set('token', token, {path: '/'});
                 cookies.set('user', credentials.email, {path: '/'})
 
-                return <Navigate replace to="/"/>
+                window.location.replace(window.location.origin.toString());
             }
         ).catch((error) => {
         console.log(error?.response?.data)
