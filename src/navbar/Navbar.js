@@ -163,7 +163,7 @@ export class Navbar extends React.Component {
         return (
             <CDropdownMenu>
                 {
-                    this.state.accountDropdownElems.filter(email => email !== this.state.email).map(elem =>
+                    this.state.accountDropdownElems.map(elem =>
                         <CDropdownItem onClick={() => this.changeSelectedAccountToShareWith(elem)}>
                             {elem}
                         </CDropdownItem>
